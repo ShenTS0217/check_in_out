@@ -1,0 +1,32 @@
+name: Daily CheckInOut
+
+on:
+  schedule:
+    # 台灣是 UTC+8，07:50 = UTC 23:50，16:00 = UTC 08:00
+    - cron: '50 23 * * 1-5'  # 每週一到五的 UTC 23:50（台灣 07:50）
+    - cron: '0 8 * * 1-5'    # 每週一到五的 UTC 08:00（台灣 16:00）
+  workflow_dispatch:  # 允許手動執行
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run script
+        env:
+          CHANNEL_ACCESS_TOKEN: ${{ secrets.CHANNEL_ACCESS_TOKEN }}
+          USER_ID: ${{ secrets.USER_ID }}
+          Account: ${{ secrets.Account }}
+          Password: ${{ secrets.Password }}
+        run: python main.py
