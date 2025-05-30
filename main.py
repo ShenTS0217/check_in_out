@@ -50,9 +50,9 @@ if response.status_code == 200:
     all_records = data.get("Data", [])
     today_record = next((rec for rec in all_records if rec.get("HCM01M1CheckIns_CheckInTime") == today_str), None)
 
-    time = today_record["HCM01M1CheckIns_CheckInTime"] or "沒有資料"
-    checkin = today_record.get("HCM01M1CheckIns_CheckIn") or "沒有資料"
-    checkout = today_record.get("HCM01M1CheckIns_CheckOut") or "沒有資料"
+    time = today_record["HCM01M1CheckIns_CheckInTime"] or "日期：沒有資料"
+    checkin = today_record.get("HCM01M1CheckIns_CheckIn") or "上班：沒有資料"
+    checkout = today_record.get("HCM01M1CheckIns_CheckOut") or "下班：沒有資料"
     text = "日期：" + time + "\n" + checkin + "\n" + checkout
 else:
     text = "資料抓取失敗！"
