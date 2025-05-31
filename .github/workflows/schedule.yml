@@ -5,7 +5,8 @@ on:
     # 台灣是 UTC+8，07:50 = UTC 23:50，16:00 = UTC 08:00
     # - cron: '50 23 * * 1-5'  # 每週一到五的 UTC 23:50（台灣 07:50）
     # - cron: '0 8 * * 1-5'    # 每週一到五的 UTC 08:00（台灣 16:00）
-    - cron: '00 17 * * *'
+    - cron: '05 2 * * *'
+    - cron: '10 2 * * *'
   workflow_dispatch:  # 允許手動執行
 
 jobs:
@@ -28,6 +29,6 @@ jobs:
         env:
           CHANNEL_ACCESS_TOKEN: ${{ secrets.CHANNEL_ACCESS_TOKEN }}
           USER_ID: ${{ secrets.USER_ID }}
-          Account: ${{ secrets.Account }}
-          Password: ${{ secrets.Password }}
+          Account: ${{ secrets.ACCOUNT }}
+          Password: ${{ secrets.PASSWORD }}
         run: python main.py
