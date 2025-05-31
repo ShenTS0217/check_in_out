@@ -29,6 +29,6 @@ jobs:
         env:
           CHANNEL_ACCESS_TOKEN: ${{ secrets.CHANNEL_ACCESS_TOKEN }}
           USER_ID: ${{ secrets.USER_ID }}
-          Account: ${{ secrets.ACCOUNT }}
-          Password: ${{ secrets.PASSWORD }}
+          ACCOUNT: ${{ secrets.ACCOUNT }}
+          PASSWORD: ${{ secrets.PASSWORD }}
         run: python main.py
