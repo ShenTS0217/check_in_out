@@ -11,6 +11,8 @@ LOGIN_PAYLOAD = {
     "Password": os.environ.get("PASSWORD"), 
     "Tenant": ""
 }
+print(LOGIN_PAYLOAD["Account"][0])
+print(LOGIN_PAYLOAD["Password"][0])
 LOGIN_HEARDES = {
     "Content-Type": "application/json",
     "User-Agent": "Mozilla/5.0"
