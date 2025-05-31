@@ -1,6 +1,7 @@
 import os
 import requests
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 LOGIN_URL = "https://www.tofel.com.tw/api/_account/loginjwt"
 ATTENDANCE_URL = "https://www.tofel.com.tw/api/HCM/HCM01M1CheckIns/SearchHCM01M1CheckInsMonthlyAttendance"
@@ -51,7 +52,7 @@ except Exception as e:
     print("Login Error: ", e)
     token = None
     
-
+tz = ZoneInfo("Asia/Taipei")
 today_str = datetime.now().strftime("%Y-%m-%d")
 date_obj = datetime.strptime(today_str, "%Y-%m-%d")
 
