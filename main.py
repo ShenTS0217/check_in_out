@@ -53,7 +53,7 @@ except Exception as e:
     token = None
     
 tz = ZoneInfo("Asia/Taipei")
-today_str = datetime.now().strftime("%Y-%m-%d")
+today_str = datetime.now(tz).strftime("%Y-%m-%d")
 date_obj = datetime.strptime(today_str, "%Y-%m-%d")
 
 ATTENDANCE_HEARDES = {
