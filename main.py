@@ -7,8 +7,8 @@ ATTENDANCE_URL = "https://www.tofel.com.tw/api/HCM/HCM01M1CheckIns/SearchHCM01M1
 CHANNEL_ACCESS_TOKEN = os.environ.get("CHANNEL_ACCESS_TOKEN")
 USER_ID = os.environ.get("USER_ID")
 LOGIN_PAYLOAD = {
-    "Account": os.environ.get("Account"),
-    "Password": os.environ.get("Password"), 
+    "Account": os.environ.get("ACCOINT"),
+    "Password": os.environ.get("PASSWORD"), 
     "Tenant": ""
 }
 LOGIN_HEARDES = {
@@ -16,9 +16,16 @@ LOGIN_HEARDES = {
     "User-Agent": "Mozilla/5.0"
 }
 
-response = requests.post(LOGIN_URL, json=LOGIN_PAYLOAD, headers=LOGIN_HEARDES)
-data = response.json()
-token = data.get("access_token")
+try:
+    # login ...
+    response = requests.post(LOGIN_URL, json=LOGIN_PAYLOAD, headers=LOGIN_HEARDES)
+    response.raise_for_status()
+    data = response.json()
+    token = data.get("access_token")
+except Exception as e:
+    print("Login Error: ", e)
+    token = None
+    
 
 today_str = datetime.now().strftime("%Y-%m-%d")
 date_obj = datetime.strptime(today_str, "%Y-%m-%d")
@@ -43,19 +50,26 @@ ATTENDANCE_PAYLOAD = {
         "UpdateBy": ""
     }
 
-response = requests.post(ATTENDANCE_URL, json=ATTENDANCE_PAYLOAD, headers=ATTENDANCE_HEARDES)
+if token:
+    try:
+        # 查詢...
+        response = requests.post(ATTENDANCE_URL, json=ATTENDANCE_PAYLOAD, headers=ATTENDANCE_HEARDES)
+        response.raise_for_status()
+        data = response.json()
+        all_records = data.get("Data", [])
+        today_record = next((rec for rec in all_records if rec.get("HCM01M1CheckIns_CheckInTime") == today_str), None)
 
-if response.status_code == 200:
-    data = response.json()
-    all_records = data.get("Data", [])
-    today_record = next((rec for rec in all_records if rec.get("HCM01M1CheckIns_CheckInTime") == today_str), None)
+        time = today_record.get("HCM01M1CheckIns_CheckInTime") or "日期：沒有資料"
+        checkin = today_record.get("HCM01M1CheckIns_CheckIn") or "上班：沒有資料"
+        checkout = today_record.get("HCM01M1CheckIns_CheckOut") or "下班：沒有資料"
+        text = "日期：" + time + "\n" + checkin + "\n" + checkout
 
-    time = today_record["HCM01M1CheckIns_CheckInTime"] or "日期：沒有資料"
-    checkin = today_record.get("HCM01M1CheckIns_CheckIn") or "上班：沒有資料"
-    checkout = today_record.get("HCM01M1CheckIns_CheckOut") or "下班：沒有資料"
-    text = "日期：" + time + "\n" + checkin + "\n" + checkout
-else:
-    text = "資料抓取失敗！"
+        print("查詢成功！")
+        print(text)
+    except Exception as e:
+        print("查詢失敗: ", e)
+        text = "資料抓取失敗！"
+
 
 message = {
     "to": USER_ID,
@@ -67,9 +81,15 @@ message = {
     ]
 }
 
-
 LINE_HEADERS = {
     "Authorization": f"Bearer {CHANNEL_ACCESS_TOKEN}",
     "Content-Type": "application/json"
 }
-response = requests.post("https://api.line.me/v2/bot/message/push", headers=LINE_HEADERS, json=message)
+
+# 發送 LINE 通知
+try:
+    response = requests.post("https://api.line.me/v2/bot/message/push", headers=LINE_HEADERS, json=message)
+    response.raise_for_status()
+    print("LINE 推送成功！")
+except Exception as e:
+    print("LINE 推送失敗：", e)
