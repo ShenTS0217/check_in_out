@@ -52,7 +52,8 @@ except Exception as e:
     token = None
     
 
-today_str = datetime.now().strftime("%Y-%m-%d")
+# today_str = datetime.now().strftime("%Y-%m-%d")
+today_str = "2025-05-29"
 date_obj = datetime.strptime(today_str, "%Y-%m-%d")
 
 ATTENDANCE_HEARDES = {
