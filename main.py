@@ -65,31 +65,29 @@ if token:
         text = "日期：" + time + "\n" + checkin + "\n" + checkout
 
         print("查詢成功！")
-        print(text)
+        
+        # 發送 LINE 通知
+        try:
+            message = {
+                "to": USER_ID,
+                "messages": [
+                    {
+                        "type": "text",
+                        "text": text
+                    }
+                ]
+            }
+            
+            LINE_HEADERS = {
+                "Authorization": f"Bearer {CHANNEL_ACCESS_TOKEN}",
+                "Content-Type": "application/json"
+            }
+            
+            response = requests.post("https://api.line.me/v2/bot/message/push", headers=LINE_HEADERS, json=message)
+            response.raise_for_status()
+            print("LINE 推送成功！")
+        except Exception as e:
+            print("LINE 推送失敗：", e)
     except Exception as e:
         print("查詢失敗: ", e)
         text = "資料抓取失敗！"
-
-
-message = {
-    "to": USER_ID,
-    "messages": [
-        {
-            "type": "text",
-            "text": text
-        }
-    ]
-}
-
-LINE_HEADERS = {
-    "Authorization": f"Bearer {CHANNEL_ACCESS_TOKEN}",
-    "Content-Type": "application/json"
-}
-
-# 發送 LINE 通知
-try:
-    response = requests.post("https://api.line.me/v2/bot/message/push", headers=LINE_HEADERS, json=message)
-    response.raise_for_status()
-    print("LINE 推送成功！")
-except Exception as e:
-    print("LINE 推送失敗：", e)
