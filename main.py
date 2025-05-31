@@ -2,12 +2,12 @@ import os
 import requests
 from datetime import datetime
 
-LOGIN_URL = "https://www.tofel.com.tw/api/account/loginjwt"
+LOGIN_URL = "https://www.tofel.com.tw/api/_account/loginjwt"
 ATTENDANCE_URL = "https://www.tofel.com.tw/api/HCM/HCM01M1CheckIns/SearchHCM01M1CheckInsMonthlyAttendance"
 CHANNEL_ACCESS_TOKEN = os.environ.get("CHANNEL_ACCESS_TOKEN")
 USER_ID = os.environ.get("USER_ID")
 LOGIN_PAYLOAD = {
-    "Account": os.environ.get("ACCOINT"),
+    "Account": os.environ.get("ACCOUNT"),
     "Password": os.environ.get("PASSWORD"), 
     "Tenant": ""
 }
