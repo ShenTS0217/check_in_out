@@ -16,6 +16,31 @@ LOGIN_HEARDES = {
     "User-Agent": "Mozilla/5.0"
 }
 
+def send_line_notify(text):
+    message = {
+        "to": USER_ID,
+        "messages": [
+            {
+                "type": "text",
+                "text": text
+            }
+        ]
+    }
+    
+    LINE_HEADERS = {
+        "Authorization": f"Bearer {CHANNEL_ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    
+    try:
+        response = requests.post("https://api.line.me/v2/bot/message/push", headers=LINE_HEADERS, json=message)
+        response.raise_for_status()
+        print("LINE 推送成功！")
+    except Exception as e:
+        print("LINE 推送失敗：", e)
+
+
+
 try:
     # login ...
     response = requests.post(LOGIN_URL, json=LOGIN_PAYLOAD, headers=LOGIN_HEARDES)
@@ -50,6 +75,7 @@ ATTENDANCE_PAYLOAD = {
         "UpdateBy": ""
     }
 
+
 if token:
     try:
         # 查詢...
@@ -65,29 +91,10 @@ if token:
         text = "日期：" + time + "\n" + checkin + "\n" + checkout
 
         print("查詢成功！")
-        
-        # 發送 LINE 通知
-        try:
-            message = {
-                "to": USER_ID,
-                "messages": [
-                    {
-                        "type": "text",
-                        "text": text
-                    }
-                ]
-            }
-            
-            LINE_HEADERS = {
-                "Authorization": f"Bearer {CHANNEL_ACCESS_TOKEN}",
-                "Content-Type": "application/json"
-            }
-            
-            response = requests.post("https://api.line.me/v2/bot/message/push", headers=LINE_HEADERS, json=message)
-            response.raise_for_status()
-            print("LINE 推送成功！")
-        except Exception as e:
-            print("LINE 推送失敗：", e)
+        send_line_notify(text)
     except Exception as e:
         print("查詢失敗: ", e)
-        text = "資料抓取失敗！"
+        send_line_notify("查詢失敗!")
+else:
+    print("Token not found!")
+    send_line_notify("查詢失敗！")
